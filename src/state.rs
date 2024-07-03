@@ -1,6 +1,5 @@
 use std::{
-  io::Read,
-  fs::{self, File}
+  fs::{self, File}, io::{Read, Write}
 };
 
 use serde_json::{
@@ -9,11 +8,25 @@ use serde_json::{
   value::Value
 };
 
+pub const STATE_JSON: &str = "./todos.json";
+
+pub fn create_file(file_name: &str) {
+  File::create(file_name)
+    .expect("Failed to create file")
+    .write("{}".as_bytes())
+    .expect("Failed to prepare file");
+}
 
 pub type StateMap = Map<String, Value>;
 
 pub fn read_file(file_name: &str) -> StateMap {
-  let mut file = File::open(file_name).expect("Failed to read file");
+  let mut file = match File::open(file_name) {
+    Ok(file) => file,
+    Err(_) => {
+      create_file(file_name);
+      File::open(file_name).expect("Failed to open file")
+    }
+  };
   let mut data = String::new();
 
   file.read_to_string(&mut data).unwrap();

@@ -4,7 +4,7 @@ mod processes;
 
 use std::env;
 use processes::process_input;
-use state::read_file;
+use state::{read_file, STATE_JSON};
 use todo::factory;
 
 fn main() {
@@ -16,16 +16,14 @@ fn main() {
   }
   
   if args.len() == 2 {
-    println!("Please add task to store");
+    println!("Please add item");
     return;  
   }
 
   let command = &args[1];
   let title = &args[2];
 
-  let state_json = String::from("./state.json");
-
-  let state = read_file(&state_json);
+  let state = read_file(STATE_JSON);
 
   let status: String;
 
